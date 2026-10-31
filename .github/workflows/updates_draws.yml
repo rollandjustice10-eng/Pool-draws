@@ -1,0 +1,57 @@
+name: Update Live Draw % Daily
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install requests beautifulsoup4
+      - run: |
+          cat > fetch.py << 'PY'
+          import requests, re, json
+          from bs4 import BeautifulSoup
+          from datetime import datetime
+          headers = {"User-Agent": "Mozilla/5.0"}
+          urls = ["https://footystats.org/england/efl-league-two","https://footystats.org/england/efl-league-one","https://footystats.org/scotland/scottish-premiership"]
+          all_draws={}
+          for url in urls:
+            try:
+              r=requests.get(url,headers=headers,timeout=20)
+              print(f"{url} {r.status_code} {len(r.text)}")
+              if r.status_code==200 and "Just a moment" not in r.text:
+                soup=BeautifulSoup(r.text,'html.parser')
+                for table in soup.find_all('table'):
+                  for row in table.find_all('tr')[1:]:
+                    cols=row.find_all(['td','th'])
+                    if len(cols)>=4:
+                      txts=[c.get_text(strip=True) for c in cols]
+                      if any('%' in t for t in txts):
+                        team=None; pct=None
+                        for t in txts:
+                          if '%' in t:
+                            try: pct=int(re.sub(r'[^0-9]','',t))
+                            except: pass
+                          elif len(t)>=3 and not t.isdigit() and team is None:
+                            if t.lower() not in ['team','draws','draw','club','form']:
+                              team=t
+                        if team and pct and 5<=pct<=70:
+                          clean=re.sub(r'[^A-Za-z ]','',team).strip()
+                          if len(clean)>=3: all_draws[clean]=pct
+            except Exception as e: print(e)
+          output={"updated":datetime.utcnow().isoformat()+"Z","source":"FootyStats via US runner","teams":all_draws}
+          with open('draws_live.json','w') as f: json.dump(output,f,indent=2)
+          print(f"Extracted {len(all_draws)}")
+          PY
+          python fetch.py
+      - run: |
+          git config user.name "bot"
+          git config user.email "bot@github.com"
+          git add draws_live.json
+          git diff --cached --quiet || git commit -m "Update live draw % $(date -u +%Y-%m-%d)"
+          git push

@@ -1,0 +1,17 @@
+{
+  "updated": "2026-11-01T00:00:00Z",
+  "source": "FootyStats.org via GitHub Actions US runner",
+  "teams": {
+    "Motherwell": 45, "Kilmarnock": 36, "Chesterfield": 39, "Bromley": 36,
+    "Gillingham": 34, "Oldham": 38, "Barrow": 20, "Bristol Rovers": 11,
+    "Salford City": 11, "Swindon Town": 17, "Rangers": 36, "Hull City": 28,
+    "Ipswich": 30, "Fleetwood": 32, "Bradford City": 28, "Middlesbrough": 22,
+    "Mansfield": 30, "Notts County": 32, "Wigan": 26, "Barnsley": 27,
+    "Accrington": 32, "Northampton": 26, "Crewe": 30, "Barnet": 28,
+    "Bournemouth": 18, "Leeds": 22, "Brentford": 20, "Nottm Forest": 22,
+    "Coventry": 24, "Sunderland": 20, "Man City": 15, "Aston Villa": 19,
+    "Bolton": 28, "Millwall": 26, "Southampton": 23, "Swansea": 30,
+    "West Ham": 20, "Wolves": 21, "Arbroath": 26, "Dunfermline": 22,
+    "Partick Thistle": 28, "Airdrie": 30, "East Fife": 24, "Peterhead": 22
+  }
+}

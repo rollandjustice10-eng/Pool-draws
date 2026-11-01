@@ -52,3 +52,4 @@ jobs:
           git add draws_live.json
           git diff --cached --quiet || git commit -m "Update draws"
           git push
+          
